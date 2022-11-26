@@ -1,0 +1,15 @@
+{
+  "description": "Discord.jsテンプレート",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node ./index.js",
+    "lint": "standard \"src/**/*.js\"",
+    "lint:fix": "standard --fix \"src/**/*.js\""
+  },
+  "dependencies": {
+    "discord.js": "^13.3.1"
+  },
+  "devDependencies": {
+    "standard": "^16.0.4"
+  }
+}
