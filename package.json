@@ -2,7 +2,7 @@
   "description": "Discord.jsテンプレート",
   "main": "src/index.js",
   "scripts": {
-    "start": "node ./index.js",
+    "start": "node ./src/index.js",
     "lint": "standard \"src/**/*.js\"",
     "lint:fix": "standard --fix \"src/**/*.js\""
   },
