@@ -1,5 +1,10 @@
 const os = require("os");
-const { Client, Intents } = require('discord.js')
+
+const util = require('util');
+const childProcess = require('child_process');
+
+
+const { Client, Intents, MessageAttachment } = require('discord.js')
 const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
@@ -11,8 +16,9 @@ client.once('ready', () => {
   console.log('Ready!')
 })
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
   if (message.content=="!monitor") {
+    await message.channel.send("現在パフォーマンスを計測中です。\n少々お持ちください。");
     const emojis = ["🟢", "🟡", "🔴"];
     var memory = {};
     var cpu = {};
@@ -65,19 +71,26 @@ client.on('messageCreate', (message) => {
 
     if (payload.memory === undefined) payload.memory = "⚠️測定エラー";
     if (payload.cpu === undefined) payload.cpu = "⚠️測定エラー";
-    var embed = {
-        title: "Botの状態",
-        description: "現在のBotのサーバーの状態です",
-        fields: [
+    const cmd = childProcess.execSync('ifstat 1 10 | textimg -o out.png', [], {shell: true});
+    
+    console.log("ifstat: "+cmd)
+
+    let attachment = new MessageAttachment('./out.png', 'out.png');
+    let embed = {
+        title: "サーバーの状態",
+        description: "現在のサーバーの状態です",
+        image: {
+	  url: "attachment://out.png"
+	},
+	fields: [
           { name: "OS", value: `${os.type()} ${os.release()} ${process.env.PROCESSOR_ARCHITEW6432 || process.arch}` },
           { name: "🧠CPU", value: `Name: ${cpu.name}\nCore: ${cpu.core}\nUsed: ${payload.cpu}` },
           { name: "🪑RAM", value: `Max: ${memory.total}GiB\nUsed: ${payload.memory}` },
           { name: "⚙Nodejs", value: `Node ${process.version} ${process.arch}` }
 	]
     };
-    message.channel.send({embeds: [embed]})
+    await message.channel.send({embeds: [embed],files: [attachment]})
   }
 })
-
-client.login('MTA0NjE0NjUyMDU0Nzg1NjQ2NQ.GIktpz.UCRnKvJ_7Ta9rWNj1RbZT29_D1Xxvm9v88ZWw8')
+client.login("")
   .catch(console.error)
